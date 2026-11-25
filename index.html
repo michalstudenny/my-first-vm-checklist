@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9fc">
+  <meta name="description" content="Interaktywna checklista bezpieczeństwa i kontroli kosztów maszyn wirtualnych Microsoft Azure.">
+  <title>Azure VM Checklist | My First</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --surface: #fff;
+      --ink: #101828;
+      --muted: #667085;
+      --line: #e6eaf0;
+      --blue: #2563eb;
+      --blue-dark: #1746a2;
+      --blue-soft: #edf4ff;
+      --green: #16865b;
+      --green-soft: #eaf7f0;
+      --amber-soft: #fff8eb;
+      --shadow: 0 12px 34px rgba(16, 24, 40, .055);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at 10% 0%, rgba(37,99,235,.055), transparent 32rem), var(--bg);
+      color: var(--ink);
+      font: 15px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    a { color: var(--blue-dark); }
+    .shell { width: min(100% - 40px, 980px); margin: 0 auto; padding: 34px 0 58px; }
+    .topline { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:0 2px 18px; }
+    .brand { display:flex; align-items:center; gap:10px; color:#344054; font-size:13px; font-weight:750; letter-spacing:.02em; }
+    .brand-mark { display:grid; place-items:center; width:30px; height:30px; border-radius:9px; color:white; background:linear-gradient(145deg,#2878f0,#1746a2); box-shadow:0 4px 10px #2563eb33; }
+    .brand-mark svg { width:18px; height:18px; }
+    .top-tag { color:#475467; font-size:12px; font-weight:650; padding:6px 10px; border:1px solid var(--line); border-radius:999px; background:#ffffffb8; }
+    .hero { position:relative; overflow:hidden; isolation:isolate; padding:38px 42px 34px; border:1px solid #dce7f7; border-radius:26px; background:linear-gradient(125deg,#fafdff 0%,#f0f6ff 58%,#e9f1ff 100%); box-shadow:var(--shadow); }
+    .hero:after { content:""; position:absolute; z-index:-1; width:340px; height:340px; border-radius:50%; right:-115px; top:-185px; border:1px solid #c9dcfb; box-shadow:0 0 0 32px #dbeafe55,0 0 0 66px #dbeafe35; }
+    h1 { max-width:720px; margin:14px 0 12px; font-size:clamp(2.15rem,5vw,3.45rem); line-height:1.04; letter-spacing:-.055em; font-weight:760; }
+    .hero p { max-width:650px; margin:0; color:#52627a; font-size:16px; line-height:1.7; }
+    .progress-panel { margin:18px 0 22px; padding:18px 20px; display:grid; grid-template-columns:1fr auto; gap:12px 20px; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 4px 14px #10182808; }
+    .progress-title { display:flex; align-items:baseline; gap:8px; }
+    .progress-title strong { font-size:14px; }
+    .progress-title span { color:var(--muted); font-size:12px; }
+    .progress-value { font-size:22px; line-height:1; letter-spacing:-.04em; font-weight:780; font-variant-numeric:tabular-nums; }
+    .progress-track { grid-column:1 / -1; height:8px; background:#edf1f6; border-radius:99px; overflow:hidden; }
+    .progress-fill { height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#2563eb,#19a36f); transition:width .25s ease; }
+    .progress-bottom { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .progress-hint { color:var(--muted); font-size:12px; }
+    .actions { display:flex; flex-wrap:wrap; gap:8px; }
+    .button { display:inline-flex; justify-content:center; align-items:center; gap:8px; min-height:37px; padding:8px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; color:#344054; font-size:12px; font-weight:700; cursor:pointer; transition:background .15s,border-color .15s,transform .15s; }
+    .button:hover { border-color:#b9c9e2; background:#f9fbff; transform:translateY(-1px); }
+    .button.primary { color:white; border-color:#1f5fd1; background:#2563eb; }
+    .button.primary:hover { background:#1e55c4; }
+    .button svg { width:15px; height:15px; }
+    .section { margin:14px 0; padding:23px 25px 10px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 3px 12px #10182805; }
+    .section-head { display:flex; align-items:flex-start; gap:13px; margin-bottom:5px; }
+    .section-icon { flex:0 0 38px; width:38px; height:38px; display:grid; place-items:center; border-radius:12px; color:#1e5bc2; background:var(--blue-soft); }
+    .section-icon svg { width:19px; height:19px; }
+    .section h2 { margin:0; font-size:18px; line-height:1.3; letter-spacing:-.025em; }
+    .section-sub { margin:4px 0 0; color:var(--muted); font-size:13px; }
+    .section-count { margin-left:auto; white-space:nowrap; color:#667085; font-size:11px; font-weight:700; padding:5px 8px; border-radius:999px; background:#f2f4f7; }
+    .item { display:grid; grid-template-columns:22px minmax(0,1fr); gap:12px; align-items:start; padding:15px 0; border-top:1px solid #eff1f4; }
+    .section-head + .item { margin-top:13px; }
+    .item input { appearance:none; width:20px; height:20px; margin:2px 0 0; border:1.6px solid #aab4c3; border-radius:6px; background:#fff; cursor:pointer; display:grid; place-items:center; transition:all .15s; }
+    .item input:hover { border-color:#4b83df; }
+    .item input:checked { border-color:var(--green); background:var(--green); }
+    .item input:checked:after { content:""; width:9px; height:5px; border-left:2px solid white; border-bottom:2px solid white; transform:rotate(-45deg) translate(1px,-1px); }
+    .item label { min-width:0; cursor:pointer; }
+    .item strong { display:block; color:#253044; font-size:14px; font-weight:720; line-height:1.45; }
+    .item small { display:block; margin-top:4px; color:var(--muted); font-size:12.5px; line-height:1.55; }
+    .item.done strong { color:#758195; text-decoration:line-through; text-decoration-thickness:1px; }
+    .callout { display:flex; gap:12px; padding:15px 17px; margin:15px 0; border:1px solid #f1dfb9; border-radius:14px; background:var(--amber-soft); color:#69450d; }
+    .callout svg { flex:0 0 19px; width:19px; height:19px; margin-top:1px; }
+    .callout strong { display:block; margin-bottom:3px; font-size:13px; }
+    .callout p { margin:0; font-size:12.5px; line-height:1.55; }
+    .resources { margin-top:22px; padding:22px 24px; border:1px solid var(--line); border-radius:18px; background:#fff; }
+    .resources h2 { margin:0 0 5px; font-size:16px; letter-spacing:-.02em; }
+    .resources p { margin:0 0 14px; color:var(--muted); font-size:12.5px; }
+    .resource-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .resource-link { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:10px 12px; border:1px solid #edf0f4; border-radius:10px; color:#344054; text-decoration:none; font-size:12px; font-weight:650; transition:all .15s; }
+    .resource-link:hover { border-color:#c6d8f4; background:#f8fbff; color:#1746a2; }
+    .resource-link span:last-child { color:#8b98aa; font-size:14px; }
+    .complete { display:none; margin:16px 0 0; padding:17px 18px; border:1px solid #c9ead8; border-radius:14px; background:var(--green-soft); color:#176342; }
+    .complete.show { display:flex; align-items:flex-start; gap:11px; }
+    .complete svg { flex:0 0 20px; width:20px; height:20px; }
+    .complete strong { display:block; font-size:14px; }
+    .complete p { margin:3px 0 0; color:#39775c; font-size:12px; }
+    .footer { padding:24px 8px 0; color:#8792a3; text-align:center; font-size:11px; line-height:1.7; }
+    .footer strong { color:#667085; font-weight:700; }
+    @media (max-width:650px) {
+      .shell { width:min(100% - 26px, 980px); padding:18px 0 40px; }
+      .topline { margin-bottom:13px; }
+      .hero { padding:28px 23px 25px; border-radius:20px; }
+      .hero:after { right:-210px; }
+      .hero p { font-size:14px; }
+      .progress-panel { padding:16px; }
+      .progress-bottom { align-items:flex-start; flex-direction:column; }
+      .section { padding:19px 17px 7px; border-radius:15px; }
+      .section h2 { font-size:16px; }
+      .section-count { font-size:10px; }
+      .item { grid-template-columns:21px minmax(0,1fr); gap:10px; }
+      .resource-grid { grid-template-columns:1fr; }
+      .resources { padding:19px 17px; }
+    }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
+    @media print {
+      @page { margin:14mm; }
+      body { background:#fff; font-size:11px; }
+      .shell { width:100%; padding:0; }
+      .topline,.actions,.resources,.complete { display:none!important; }
+      .hero { padding:20px 22px; box-shadow:none; background:#f2f6fc; }
+      .hero:after { display:none; }
+      h1 { font-size:27px; }
+      .progress-panel { box-shadow:none; margin:12px 0; padding:12px 15px; }
+      .section { break-inside:avoid; box-shadow:none; padding:14px 16px 5px; margin:10px 0; }
+      .item { padding:9px 0; }
+      .item small { font-size:10px; }
+      .callout { break-inside:avoid; padding:10px 12px; }
+      .footer { padding-top:12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topline">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 5.5 12 2l7 3.5v13L12 22l-7-3.5v-13Z" stroke="currentColor" stroke-width="1.7"/><path d="m5.5 6 6.5 3.3L18.5 6M12 9.3V21" stroke="currentColor" stroke-width="1.5"/></svg>
+        </span>
+        MY FIRST <span style="color:#98a2b3">/</span> AZURE
+      </div>
+      <span class="top-tag">Materiał dla uczestników</span>
+    </div>
+
+    <header class="hero">
+      <h1>Azure VM<br>Checklist</h1>
+      <p>Praktyczna lista kontrolna, która pomoże Ci zabezpieczyć maszynę wirtualną i kontrolować koszty w Microsoft Azure.</p>
+    </header>
+
+    <section class="progress-panel" aria-live="polite">
+      <div class="progress-title"><strong>Twój postęp</strong><span id="progress-caption">Zacznij od pierwszego punktu</span></div>
+      <div class="progress-value"><span id="count">0</span><span style="color:#98a2b3;font-size:15px;font-weight:600"> / </span><span id="total">7</span></div>
+      <div class="progress-track" id="progress" role="progressbar" aria-label="Postęp checklisty" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill" id="fill"></div></div>
+      <div class="progress-bottom">
+        <span class="progress-hint" id="progress-hint">Zaznaczenia zapisują się automatycznie w tej przeglądarce.</span>
+        <div class="actions">
+          <button class="button" id="reset" type="button">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 7v5h5M5.5 12a7 7 0 1 0 2-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Resetuj
+          </button>
+          <button class="button primary" type="button" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 8V3h10v5M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7v-7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            Drukuj / Zapisz PDF
+          </button>
+        </div>
+      </div>
+      <div class="complete" id="complete" role="status">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="m8 12 2.5 2.5L16 9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div><strong>Świetna robota! Checklista ukończona.</strong><p>Jeśli nie potrzebujesz już środowiska, usuń zasoby Azure, których nie chcesz dalej opłacać.</p></div>
+      </div>
+    </section>
+
+    <section class="section" data-section>
+      <div class="section-head">
+        <span class="section-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 19 6v5c0 4.5-3 7.8-7 10-4-2.2-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.8"/><path d="M9 11.5a3 3 0 1 1 5.7 1.3c-.7 1.1-1.7 1.3-1.7 2.7M13 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div><h2>Dostęp do konta</h2><p class="section-sub">Zabezpiecz konto, z którego zarządzasz zasobami Azure.</p></div>
+        <span class="section-count">0/1 wykonane</span>
+      </div>
+      <div class="item"><input id="mfa" type="checkbox"><label for="mfa"><strong>Włącz Multi-Factor Authentication (MFA)</strong><small>Włącz dodatkowy składnik logowania dla konta, np. Microsoft Authenticator.</small></label></div>
+    </section>
+
+    <section class="section" data-section>
+      <div class="section-head">
+        <span class="section-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div><h2>Sieć i system</h2><p class="section-sub">Ogranicz dostęp do maszyny i zadbaj o aktualność systemu.</p></div>
+        <span class="section-count">0/2 wykonane</span>
+      </div>
+      <div class="item"><input id="ports" type="checkbox"><label for="ports"><strong>Nie wystawiaj portów 22 (SSH) i 3389 (RDP) bezpośrednio do Internetu</strong><small>Do dostępu administracyjnego użyj Azure Bastion.</small></label></div>
+      <div class="item"><input id="ssh-updates" type="checkbox"><label for="ssh-updates"><strong>Używaj kluczy SSH zamiast haseł i włącz automatyczne aktualizacje</strong><small>Chroń klucz prywatny. Regularnie aktualizuj system operacyjny i używane oprogramowanie.</small></label></div>
+    </section>
+
+    <section class="section" data-section>
+      <div class="section-head">
+        <span class="section-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2v20M17 6.5c0-1.7-2.2-3-5-3s-5 1.3-5 3 2.2 3 5 3 5 1.3 5 3-2.2 3-5 3-5-1.3-5-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+        <div><h2>Kontrola kosztów</h2><p class="section-sub">Kontroluj koszty przed wdrożeniem, w trakcie pracy i po jej zakończeniu.</p></div>
+        <span class="section-count">0/4 wykonane</span>
+      </div>
+      <div class="item"><input id="calculator" type="checkbox"><label for="calculator"><strong>Oszacuj koszty w Azure Pricing Calculator</strong><small>Uwzględnij VM, dyski i inne powiązane zasoby.</small></label></div>
+      <div class="item"><input id="budget" type="checkbox"><label for="budget"><strong>Ustaw Azure Budget i alerty (np. 50%, 80%, 100%)</strong><small>Skonfiguruj powiadomienia przed wdrożeniem pierwszych zasobów.</small></label></div>
+      <div class="item"><input id="shutdown" type="checkbox"><label for="shutdown"><strong>Skonfiguruj Auto-shutdown</strong><small>Ustaw automatyczne wyłączanie VM o godzinie, w której zwykle kończysz pracę.</small></label></div>
+      <div class="item"><input id="deallocate" type="checkbox"><label for="deallocate"><strong>Pamiętaj o kosztach po zatrzymaniu VM</strong><small>Stan <code>Stopped (deallocated)</code> zatrzymuje naliczanie opłat za CPU i RAM, ale nadal mogą być naliczane opłaty, np. za dyski. Jeśli nie potrzebujesz już środowiska, usuń całą Resource Group.</small></label></div>
+    </section>
+
+    <aside class="callout">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 2.8 19h18.4L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v4.5M12 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div><strong>Azure Budget nie jest limitem wydatków.</strong><p>Azure Budget wysyła powiadomienia, ale sam nie blokuje wydatków ani nie zatrzymuje zasobów.</p><p style="margin-top:8px">Przed wdrożeniem sprawdź aktualne warunki i ceny.</p></div>
+    </aside>
+
+    <section class="resources">
+      <h2>Przydatne materiały</h2>
+      <p>Oficjalna dokumentacja Microsoft i narzędzia, do których warto wrócić.</p>
+      <div class="resource-grid">
+        <a class="resource-link" href="https://azure.microsoft.com/pricing/calculator/?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer"><span>Azure Pricing Calculator</span><span>↗</span></a>
+        <a class="resource-link" href="https://learn.microsoft.com/azure/cost-management-billing/costs/tutorial-acm-create-budgets?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer"><span>Azure Budgets</span><span>↗</span></a>
+        <a class="resource-link" href="https://learn.microsoft.com/azure/virtual-machines/auto-shutdown-vm?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer"><span>Auto-shutdown</span><span>↗</span></a>
+        <a class="resource-link" href="https://learn.microsoft.com/azure/bastion/bastion-overview?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer"><span>Azure Bastion</span><span>↗</span></a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>My First · Azure VM od zera</strong><br>
+      © 2026 Michał Studenny. Wszelkie prawa zastrzeżone.<br>
+      Zaznaczenia zapisują się lokalnie w tej przeglądarce na tym urządzeniu. Nie są wysyłane na serwer.<br><br>
+      <em>Postęp można śledzić, resetować i zapisać jako PDF.</em>
+    </footer>
+  </main>
+  <script>
+    (() => {
+      const boxes = [...document.querySelectorAll('input[type="checkbox"]')];
+      const storageKey = 'azure-vm-checklist-v3';
+      const count = document.getElementById('count');
+      const total = document.getElementById('total');
+      const fill = document.getElementById('fill');
+      const progress = document.getElementById('progress');
+      const caption = document.getElementById('progress-caption');
+      const hint = document.getElementById('progress-hint');
+      const complete = document.getElementById('complete');
+
+      function update() {
+        const done = boxes.filter(box => box.checked).length;
+        const percent = Math.round(done / boxes.length * 100);
+        count.textContent = done;
+        total.textContent = boxes.length;
+        fill.style.width = percent + '%';
+        progress.setAttribute('aria-valuenow', String(percent));
+        caption.textContent = percent === 100 ? 'Wszystkie punkty wykonane' : percent === 0 ? 'Zacznij od pierwszego punktu' : `${percent}% ukończone`;
+        hint.textContent = percent === 100 ? 'Możesz wydrukować lub zapisać checklistę jako PDF.' : 'Zaznaczenia zapisują się automatycznie w tej przeglądarce.';
+        complete.classList.toggle('show', percent === 100);
+        boxes.forEach(box => box.closest('.item').classList.toggle('done', box.checked));
+        document.querySelectorAll('[data-section]').forEach(section => {
+          const sectionBoxes = [...section.querySelectorAll('input[type="checkbox"]')];
+          const badge = section.querySelector('.section-count');
+          const sectionDone = sectionBoxes.filter(box => box.checked).length;
+          badge.textContent = `${sectionDone}/${sectionBoxes.length} wykonane`;
+          badge.style.background = sectionDone === sectionBoxes.length ? '#eaf7f0' : '#f2f4f7';
+          badge.style.color = sectionDone === sectionBoxes.length ? '#176342' : '#667085';
+        });
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(boxes.filter(box => box.checked).map(box => box.id)));
+        } catch (error) { /* local storage may be unavailable */ }
+      }
+
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+        boxes.forEach(box => box.checked = saved.includes(box.id));
+      } catch (error) { /* start with an empty checklist */ }
+
+      boxes.forEach(box => box.addEventListener('change', update));
+      document.getElementById('reset').addEventListener('click', () => {
+        if (!boxes.some(box => box.checked)) return;
+        if (window.confirm('Wyczyścić wszystkie zaznaczenia?')) {
+          boxes.forEach(box => box.checked = false);
+          update();
+        }
+      });
+      update();
+    })();
+  </script>
+</body>
+</html>
